@@ -343,6 +343,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
           <div className="pc-inside">
             <div className="pc-shine" />
             <div className="pc-glare" />
+            <div className="pc-sheen" />
             <div className="pc-content pc-avatar-content">
               <img
                 className="avatar"
