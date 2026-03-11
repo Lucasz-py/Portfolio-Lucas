@@ -1,80 +1,36 @@
 'use client';
 import { useEffect, useRef } from 'react';
 
-interface ColorRGB {
-  r: number;
-  g: number;
-  b: number;
-}
+interface ColorRGB { r: number; g: number; b: number; }
 
 interface SplashCursorProps {
-  SIM_RESOLUTION?: number;
-  DYE_RESOLUTION?: number;
-  CAPTURE_RESOLUTION?: number;
-  DENSITY_DISSIPATION?: number;
-  VELOCITY_DISSIPATION?: number;
-  PRESSURE?: number;
-  PRESSURE_ITERATIONS?: number;
-  CURL?: number;
-  SPLAT_RADIUS?: number;
-  SPLAT_FORCE?: number;
-  SHADING?: boolean;
-  COLOR_UPDATE_SPEED?: number;
-  BACK_COLOR?: ColorRGB;
-  TRANSPARENT?: boolean;
+  SIM_RESOLUTION?: number; DYE_RESOLUTION?: number; CAPTURE_RESOLUTION?: number;
+  DENSITY_DISSIPATION?: number; VELOCITY_DISSIPATION?: number; PRESSURE?: number;
+  PRESSURE_ITERATIONS?: number; CURL?: number; SPLAT_RADIUS?: number;
+  SPLAT_FORCE?: number; SHADING?: boolean; COLOR_UPDATE_SPEED?: number;
+  BACK_COLOR?: ColorRGB; TRANSPARENT?: boolean;
 }
 
 interface Pointer {
-  id: number;
-  texcoordX: number;
-  texcoordY: number;
-  prevTexcoordX: number;
-  prevTexcoordY: number;
-  deltaX: number;
-  deltaY: number;
-  down: boolean;
-  moved: boolean;
-  color: ColorRGB;
+  id: number; texcoordX: number; texcoordY: number; prevTexcoordX: number;
+  prevTexcoordY: number; deltaX: number; deltaY: number; down: boolean;
+  moved: boolean; color: ColorRGB;
 }
 
-interface TextureFormat {
-  internalFormat: number;
-  format: number;
-}
-
-interface OESTextureHalfFloat {
-  HALF_FLOAT_OES: number;
-}
+interface TextureFormat { internalFormat: number; format: number; }
+interface OESTextureHalfFloat { HALF_FLOAT_OES: number; }
 
 function pointerPrototype(): Pointer {
   return {
-    id: -1,
-    texcoordX: 0,
-    texcoordY: 0,
-    prevTexcoordX: 0,
-    prevTexcoordY: 0,
-    deltaX: 0,
-    deltaY: 0,
-    down: false,
-    moved: false,
-    color: { r: 0, g: 0, b: 0 }
+    id: -1, texcoordX: 0, texcoordY: 0, prevTexcoordX: 0, prevTexcoordY: 0,
+    deltaX: 0, deltaY: 0, down: false, moved: false, color: { r: 0, g: 0, b: 0 }
   };
 }
 
 export default function SplashCursor({
-  SIM_RESOLUTION = 128,
-  DYE_RESOLUTION = 1440,
-  CAPTURE_RESOLUTION = 512,
-  DENSITY_DISSIPATION = 3.5,
-  VELOCITY_DISSIPATION = 2,
-  PRESSURE = 0.1,
-  PRESSURE_ITERATIONS = 20,
-  CURL = 3,
-  SPLAT_RADIUS = 0.2,
-  SPLAT_FORCE = 6000,
-  SHADING = true,
-  COLOR_UPDATE_SPEED = 10,
-  BACK_COLOR = { r: 0.5, g: 0, b: 0 },
+  SIM_RESOLUTION = 128, DYE_RESOLUTION = 1440, CAPTURE_RESOLUTION = 512, DENSITY_DISSIPATION = 3.5,
+  VELOCITY_DISSIPATION = 2, PRESSURE = 0.1, PRESSURE_ITERATIONS = 20, CURL = 3, SPLAT_RADIUS = 0.2,
+  SPLAT_FORCE = 6000, SHADING = true, COLOR_UPDATE_SPEED = 10, BACK_COLOR = { r: 0.5, g: 0, b: 0 },
   TRANSPARENT = true
 }: SplashCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -83,26 +39,12 @@ export default function SplashCursor({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // CORRECCIÓN 1: Cambiado a const
     const pointers: Pointer[] = [pointerPrototype()];
-
-    // CORRECCIÓN EXTRA: config tampoco se reasigna, así que usamos const
     const config = {
-      SIM_RESOLUTION: SIM_RESOLUTION!,
-      DYE_RESOLUTION: DYE_RESOLUTION!,
-      CAPTURE_RESOLUTION: CAPTURE_RESOLUTION!,
-      DENSITY_DISSIPATION: DENSITY_DISSIPATION!,
-      VELOCITY_DISSIPATION: VELOCITY_DISSIPATION!,
-      PRESSURE: PRESSURE!,
-      PRESSURE_ITERATIONS: PRESSURE_ITERATIONS!,
-      CURL: CURL!,
-      SPLAT_RADIUS: SPLAT_RADIUS!,
-      SPLAT_FORCE: SPLAT_FORCE!,
-      SHADING,
-      COLOR_UPDATE_SPEED: COLOR_UPDATE_SPEED!,
-      PAUSED: false,
-      BACK_COLOR,
-      TRANSPARENT
+      SIM_RESOLUTION: SIM_RESOLUTION!, DYE_RESOLUTION: DYE_RESOLUTION!, CAPTURE_RESOLUTION: CAPTURE_RESOLUTION!,
+      DENSITY_DISSIPATION: DENSITY_DISSIPATION!, VELOCITY_DISSIPATION: VELOCITY_DISSIPATION!, PRESSURE: PRESSURE!,
+      PRESSURE_ITERATIONS: PRESSURE_ITERATIONS!, CURL: CURL!, SPLAT_RADIUS: SPLAT_RADIUS!, SPLAT_FORCE: SPLAT_FORCE!,
+      SHADING, COLOR_UPDATE_SPEED: COLOR_UPDATE_SPEED!, PAUSED: false, BACK_COLOR, TRANSPARENT
     };
 
     const { gl, ext } = getWebGLContext(canvas);
@@ -114,14 +56,7 @@ export default function SplashCursor({
     }
 
     function getWebGLContext(canvas: HTMLCanvasElement) {
-      const params = {
-        alpha: true,
-        depth: false,
-        stencil: false,
-        antialias: false,
-        preserveDrawingBuffer: false
-      };
-
+      const params = { alpha: true, depth: false, stencil: false, antialias: false, preserveDrawingBuffer: false };
       let gl = canvas.getContext('webgl2', params) as WebGL2RenderingContext | null;
       if (!gl) gl = (canvas.getContext('webgl', params) || canvas.getContext('experimental-webgl', params)) as WebGL2RenderingContext | null;
       if (!gl) throw new Error('Unable to initialize WebGL.');
@@ -227,7 +162,6 @@ export default function SplashCursor({
     }
 
     function getUniforms(program: WebGLProgram) {
-      // CORRECCIÓN 2: Cambiado a const
       const uniforms: Record<string, WebGLUniformLocation | null> = {};
       const uniformCount = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
       for (let i = 0; i < uniformCount; i++) {
@@ -240,11 +174,7 @@ export default function SplashCursor({
     function createProgramWrapper(vertexShader: WebGLShader | null, fragmentShader: WebGLShader | null) {
       const program = createProgramInfo(vertexShader, fragmentShader);
       const uniforms = program ? getUniforms(program) : {};
-      return {
-        program,
-        uniforms,
-        bind: () => { if (program) gl.useProgram(program); }
-      };
+      return { program, uniforms, bind: () => { if (program) gl.useProgram(program); } };
     }
 
     function createMaterialWrapper(vertexShader: WebGLShader | null, fragmentShaderSource: string) {
@@ -567,7 +497,6 @@ export default function SplashCursor({
     function getResolution(resolution: number) {
       const w = gl.drawingBufferWidth; const h = gl.drawingBufferHeight;
       const aspectRatio = w / h;
-      // CORRECCIÓN 3: Cambiado a const
       const aspect = aspectRatio < 1 ? 1 / aspectRatio : aspectRatio;
       const min = Math.round(resolution); const max = Math.round(resolution * aspect);
       if (w > h) return { width: max, height: min };
@@ -586,7 +515,20 @@ export default function SplashCursor({
     let colorUpdateTimer = 0.0;
     let animationFrameId: number;
 
+    // --- OPTIMIZACIÓN DE RENDIMIENTO: INTERSECTION OBSERVER ---
+    let isVisible = true;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { isVisible = entry.isIntersecting; });
+    }, { threshold: 0 });
+    observer.observe(canvas);
+
     function updateFrame() {
+      if (!isVisible) {
+        // Pausar físicas si no se ve en pantalla (Ahorra muchísima GPU/CPU)
+        animationFrameId = requestAnimationFrame(updateFrame);
+        return; 
+      }
+
       const dt = calcDeltaTime();
       if (resizeCanvas()) initFramebuffers();
       updateColors(dt);
@@ -792,11 +734,7 @@ export default function SplashCursor({
         { r: 0.66, g: 0.33, b: 0.97 }  // Morado
       ];
       const baseColor = palette[Math.floor(Math.random() * palette.length)];
-      return {
-        r: baseColor.r * 0.2,
-        g: baseColor.g * 0.2,
-        b: baseColor.b * 0.2,
-      };
+      return { r: baseColor.r * 0.2, g: baseColor.g * 0.2, b: baseColor.b * 0.2 };
     }
 
     function wrap(value: number, min: number, max: number) {
@@ -834,9 +772,7 @@ export default function SplashCursor({
       }
     };
 
-    const handleTouchEnd = () => {
-      updatePointerUpData(pointers[0]);
-    };
+    const handleTouchEnd = () => { updatePointerUpData(pointers[0]); };
 
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mousemove', handleMouseMove);
@@ -847,6 +783,7 @@ export default function SplashCursor({
     updateFrame();
 
     return () => {
+      observer.disconnect(); // Desconectar observer al desmontar
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mousemove', handleMouseMove);
