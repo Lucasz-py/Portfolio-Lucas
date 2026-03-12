@@ -8,6 +8,7 @@ interface LiquidChromeProps extends React.HTMLAttributes<HTMLDivElement> {
   frequencyX?: number;
   frequencyY?: number;
   interactive?: boolean;
+  isAnimated?: boolean;
 }
 
 export const LiquidChrome: React.FC<LiquidChromeProps> = ({
@@ -17,9 +18,21 @@ export const LiquidChrome: React.FC<LiquidChromeProps> = ({
   frequencyX = 3,
   frequencyY = 2,
   interactive = true,
+  isAnimated = false,
   ...props
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const isAnimatedRef = useRef(isAnimated);
+  const animationControlRef = useRef<{ play: () => void, pause: () => void } | null>(null);
+
+  useEffect(() => {
+    isAnimatedRef.current = isAnimated;
+    if (isAnimated) {
+      animationControlRef.current?.play();
+    } else {
+      animationControlRef.current?.pause();
+    }
+  }, [isAnimated]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -64,9 +77,6 @@ export const LiquidChrome: React.FC<LiquidChromeProps> = ({
       }
 
       vec2 warpUV(vec2 uv, float t) {
-        // More iterations + irrational-ish phase offsets = smoother, rounder curves
-        // Each iteration uses slightly different frequency multipliers to avoid
-        // the harmonic resonance that creates straight edges
         uv.x += uAmplitude / 1.0 * cos(1.0 * uFrequencyX * uv.y + t * 1.00 + 0.00);
         uv.y += uAmplitude / 1.0 * cos(1.0 * uFrequencyY * uv.x + t * 1.00 + 1.57);
         uv.x += uAmplitude / 2.0 * cos(1.9 * uFrequencyX * uv.y + t * 0.97 + 2.39);
@@ -86,7 +96,6 @@ export const LiquidChrome: React.FC<LiquidChromeProps> = ({
         vec2 warped = warpUV(uv - origin, uTime + timeOffset);
         float d = length(warped);
         float heat = 1.0 - clamp(d / width, 0.0, 1.0);
-        // Softer power curve = smoother gradient falloff at edges
         return pow(heat, 2.2);
       }
 
@@ -109,7 +118,6 @@ export const LiquidChrome: React.FC<LiquidChromeProps> = ({
         h = clamp(h, 0.0, 1.0);
 
         vec3 col = refPalette(h);
-        // Wider smoothstep range = softer edge transition, no abrupt cutoffs
         float mask = smoothstep(0.04, 0.22, h);
         col *= mask;
 
@@ -149,17 +157,25 @@ export const LiquidChrome: React.FC<LiquidChromeProps> = ({
       renderer.setSize(container.offsetWidth, container.offsetHeight);
       const r = program.uniforms.uResolution.value as Float32Array;
       r[0] = gl.canvas.width; r[1] = gl.canvas.height; r[2] = gl.canvas.width / gl.canvas.height;
+      
+      // Si está pausado, mantenemos el frame fijo en caso de que redimensionen la pantalla
+      if (!isAnimatedRef.current) {
+        program.uniforms.uTime.value = 5.0;
+        renderer.render({ scene: mesh });
+      }
     }
     window.addEventListener('resize', resize);
     resize();
 
     function handleMouseMove(e: MouseEvent) {
+      if (!isAnimatedRef.current) return;
       const rect = container.getBoundingClientRect();
       const m = program.uniforms.uMouse.value as Float32Array;
       m[0] = (e.clientX - rect.left) / rect.width;
       m[1] = 1 - (e.clientY - rect.top) / rect.height;
     }
     function handleTouchMove(e: TouchEvent) {
+      if (!isAnimatedRef.current) return;
       if (!e.touches.length) return;
       const t = e.touches[0];
       const rect = container.getBoundingClientRect();
@@ -173,17 +189,71 @@ export const LiquidChrome: React.FC<LiquidChromeProps> = ({
       container.addEventListener('touchmove', handleTouchMove);
     }
 
-    let animId: number;
-    function update(t: number) {
-      animId = requestAnimationFrame(update);
+    let animId: number | null = null;
+    let isVisible = true;
+
+    function updateLoop(t: number) {
+      // CORRECCIÓN DEL BUG: Si no está activo o no se ve, anulamos el ID para poder reactivarlo luego
+      if (!isAnimatedRef.current || !isVisible) {
+        animId = null;
+        return;
+      }
+      
       program.uniforms.uTime.value = t * 0.001 * speed;
       renderer.render({ scene: mesh });
+      animId = requestAnimationFrame(updateLoop);
     }
-    animId = requestAnimationFrame(update);
+
+    animationControlRef.current = {
+      play: () => {
+        // Aseguramos que solo arranque si no hay ya un ciclo activo y es visible
+        if (animId === null && isVisible && isAnimatedRef.current) {
+          animId = requestAnimationFrame(updateLoop);
+        }
+      },
+      pause: () => {
+        if (animId !== null) {
+          cancelAnimationFrame(animId);
+          animId = null;
+        }
+        program.uniforms.uTime.value = 5.0; 
+        renderer.render({ scene: mesh });
+      }
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+      if (isVisible) {
+        // Si volvemos a ver el Hero y los efectos están activados, arranca
+        if (isAnimatedRef.current) {
+          animationControlRef.current?.play();
+        } else {
+          // Si entramos pero están desactivados, garantizamos el fotograma bonito
+          program.uniforms.uTime.value = 5.0;
+          renderer.render({ scene: mesh });
+        }
+      } else {
+        // CORRECCIÓN: Si salimos de pantalla, matamos el ciclo de inmediato
+        if (animId !== null) {
+          cancelAnimationFrame(animId);
+          animId = null;
+        }
+      }
+    });
+    observer.observe(container);
+
+    // Arranque inicial según estado
+    if (isAnimatedRef.current) {
+      animationControlRef.current.play();
+    } else {
+      animationControlRef.current.pause();
+    }
+
     container.appendChild(gl.canvas);
 
     return () => {
-      cancelAnimationFrame(animId);
+      observer.disconnect();
+      if (animId !== null) cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
       if (interactive) {
         container.removeEventListener('mousemove', handleMouseMove);

@@ -1,15 +1,28 @@
 import React, { Suspense } from 'react';
 import { motion } from 'framer-motion';
+import { FiZap, FiZapOff } from 'react-icons/fi';
+import { useAnimation } from '../context/AnimationContext'; 
 
 const LiquidChrome = React.lazy(() => import('./LiquidChrome').then(module => ({ default: module.LiquidChrome })));
 
 export default function Hero() {
+  const { animationsEnabled, toggleAnimations } = useAnimation(); 
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black text-white">
 
+      {/* SIEMPRE SE RENDERIZA, PERO SE PAUSA SI animationsEnabled ES FALSE */}
       <div className="absolute inset-0 z-0">
         <Suspense fallback={null}>
-          <LiquidChrome baseColor={[0.9, 0.25, 0.0]} speed={0.18} amplitude={0.42} frequencyX={1.8} frequencyY={1.6} interactive={false} />
+          <LiquidChrome 
+            baseColor={[0.9, 0.25, 0.0]} 
+            speed={0.18} 
+            amplitude={0.42} 
+            frequencyX={1.8} 
+            frequencyY={1.6} 
+            interactive={false} 
+            isAnimated={animationsEnabled} // <-- Pasa el estado aquí
+          />
         </Suspense>
       </div>
 
@@ -47,6 +60,22 @@ export default function Hero() {
             Contacto
           </button>
         </motion.div>
+
+        {/* --- SWITCH DE EFECTOS --- */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.6 }} className="mt-14 flex flex-col items-center gap-3 pointer-events-auto bg-black/30 px-6 py-4 rounded-2xl border border-white/5 backdrop-blur-sm">
+          <span className="font-mono text-[10px] sm:text-xs text-gray-400 tracking-widest uppercase flex items-center gap-2">
+            {animationsEnabled ? (
+              <><FiZap className="text-orange-400 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)] w-4 h-4" /> <span className="text-orange-400 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]">Efectos Activados</span></>
+            ) : (
+              <><FiZapOff className="text-gray-500 w-4 h-4" /> <span>Activar Efectos y Animaciones</span></>
+            )}
+          </span>
+          <label className="relative inline-flex items-center cursor-pointer hover-target">
+            <input type="checkbox" className="sr-only peer" checked={animationsEnabled} onChange={toggleAnimations} />
+            <div className="w-14 h-7 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-gray-300 after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-orange-500/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)] peer-checked:shadow-[0_0_15px_rgba(249,115,22,0.5)]"></div>
+          </label>
+        </motion.div>
+
       </div>
     </section>
   );

@@ -4,27 +4,28 @@ import Hero from './components/Hero';
 import WhoAmI from './components/WhoAmI';
 import TechStack from './components/TechStack';
 import SelectedWorks from './components/SelectedWorks';
-import Footer from './components/Footer'; // <-- Importamos el nuevo Footer
+import Footer from './components/Footer';
+import { AnimationProvider } from './context/AnimationContext'; // <-- Importamos el Contexto
 
 function App() {
   return (
-    // Agregamos bg-black aquí para asegurarnos de que no haya fondos blancos globales
-    <div className="relative min-h-screen bg-black">
-      <CustomCursor />
-      
-      <Header />
+    // Envolvemos todo en el AnimationProvider
+    <AnimationProvider>
+      <div className="relative min-h-screen bg-black">
+        <CustomCursor />
+        
+        <Header />
 
-      {/* ELIMINAMOS el className="pt-24" que empujaba todo hacia abajo */}
-      <main>
-        <Hero />
-        <WhoAmI />
-        <TechStack />
-        <SelectedWorks />
-      </main>
+        <main>
+          <Hero />
+          <WhoAmI />
+          <TechStack />
+          <SelectedWorks />
+        </main>
 
-      {/* Agregamos el Footer al final de la página */}
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </AnimationProvider>
   );
 }
 

@@ -1,10 +1,11 @@
-
 import { motion, type Variants } from 'framer-motion';
 import { FiGithub, FiLinkedin, FiMail, FiInstagram } from 'react-icons/fi';
 import { SiWhatsapp } from 'react-icons/si';
+import { useAnimation } from '../context/AnimationContext';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const { animationsEnabled } = useAnimation(); 
 
   const socialLinks = [
     { name: 'GitHub', url: 'https://github.com/Lucasz-py', icon: FiGithub, hoverColor: 'hover:text-orange-400 hover:border-orange-400', glow: 'group-hover:shadow-[0_0_15px_rgba(249,115,22,0.4)]' },
@@ -26,9 +27,10 @@ export default function Footer() {
   return (
     <footer id="contact" className="relative bg-black text-white pt-16 pb-10 overflow-hidden border-t border-white/5">
       
-      <motion.div animate={{ opacity: [0.1, 0.25, 0.1], scale: [1, 1.05, 1] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[300px] bg-purple-900/20 rounded-t-full mix-blend-screen filter blur-[120px] pointer-events-none z-0"></motion.div>
-      <motion.div animate={{ opacity: [0.1, 0.2, 0.1], scale: [1, 1.1, 1] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="absolute bottom-0 left-0 w-[400px] h-[200px] bg-blue-900/20 rounded-tr-full mix-blend-screen filter blur-[100px] pointer-events-none z-0"></motion.div>
-      <motion.div animate={{ opacity: [0.05, 0.15, 0.05], scale: [1, 1.1, 1] }} transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }} className="absolute bottom-0 right-0 w-[400px] h-[200px] bg-orange-900/10 rounded-tl-full mix-blend-screen filter blur-[100px] pointer-events-none z-0"></motion.div>
+      {/* LUCES ESTÁTICAS O ANIMADAS SEGÚN MODO */}
+      <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[300px] bg-purple-900/30 rounded-t-full mix-blend-screen filter blur-[120px] pointer-events-none z-0 ${animationsEnabled ? 'animate-ambient-glow' : 'opacity-20'}`}></div>
+      <div className={`absolute bottom-0 left-0 w-[400px] h-[200px] bg-blue-900/30 rounded-tr-full mix-blend-screen filter blur-[100px] pointer-events-none z-0 ${animationsEnabled ? 'animate-ambient-glow-delayed' : 'opacity-20'}`}></div>
+      <div className={`absolute bottom-0 right-0 w-[400px] h-[200px] bg-orange-900/20 rounded-tl-full mix-blend-screen filter blur-[100px] pointer-events-none z-0 ${animationsEnabled ? 'animate-ambient-glow-slow' : 'opacity-20'}`}></div>
 
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
 
@@ -48,10 +50,18 @@ export default function Footer() {
             Ya sea que tengas una idea en mente o necesites un desarrollador Full Stack para tu equipo, mi bandeja de entrada siempre está abierta.
           </motion.p>
           
-          <motion.a initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ type: "spring", stiffness: 50, delay: 0.3 }} href="https://wa.me/5493757500969" target="_blank" rel="noreferrer" className="group relative px-8 py-4 bg-white/5 border border-white/10 rounded-full font-semibold tracking-wide hover:bg-white/10 transition-all duration-300 overflow-hidden shadow-lg hover:shadow-green-500/20">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-            <span className="relative z-10 flex items-center gap-3">
-              Comunicate conmigo <SiWhatsapp className="w-5 h-5 text-green-400 drop-shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
+          <motion.a 
+            initial={{ opacity: 0, y: 20 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: true }} 
+            transition={{ type: "spring", stiffness: 50, delay: 0.3 }} 
+            href="https://wa.me/5493757500969" 
+            target="_blank" 
+            rel="noreferrer" 
+            className="group relative px-8 py-4 bg-orange-600/10 border border-orange-500/30 rounded-full font-semibold tracking-wide hover:bg-orange-500/20 hover:border-orange-400 transition-all duration-300 overflow-hidden shadow-lg hover:shadow-[0_0_20px_rgba(249,115,22,0.4)]"
+          >
+            <span className="relative z-10 flex items-center gap-3 text-orange-100 group-hover:text-white transition-colors">
+              Comunicate conmigo <SiWhatsapp className="w-5 h-5 text-orange-400 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)] group-hover:text-white transition-colors" />
             </span>
           </motion.a>
         </div>

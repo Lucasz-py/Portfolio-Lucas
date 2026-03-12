@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import LogoLoop from './LogoLoop';
+import { useAnimation } from '../context/AnimationContext';
 import { 
   SiDocker, SiSupabase, SiReact, SiNextdotjs, SiTypescript, 
   SiTailwindcss, SiVercel, SiNodedotjs, SiGit, SiMercadopago
@@ -8,9 +9,7 @@ import {
 
 const SplashCursor = React.lazy(() => import('./SplashCursor'));
 
-interface ColorTheme {
-  text: string; baseBorder: string; baseShadow: string; hoverBorder: string; hoverShadow: string; glowText: string; radialGlow: string;
-}
+interface ColorTheme { text: string; baseBorder: string; baseShadow: string; hoverBorder: string; hoverShadow: string; glowText: string; radialGlow: string; }
 
 const colors: Record<'blue' | 'orange' | 'purple', ColorTheme> = {
   blue: { text: 'text-blue-400', baseBorder: 'border-blue-500/40', baseShadow: 'shadow-[0_0_20px_rgba(59,130,246,0.15),inset_0_0_15px_rgba(59,130,246,0.1)]', hoverBorder: 'group-hover:border-blue-400', hoverShadow: 'group-hover:shadow-[0_0_30px_rgba(59,130,246,0.5),inset_0_0_20px_rgba(59,130,246,0.3)]', glowText: 'drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]', radialGlow: 'rgba(59,130,246,0.25)' },
@@ -18,9 +17,7 @@ const colors: Record<'blue' | 'orange' | 'purple', ColorTheme> = {
   purple: { text: 'text-purple-400', baseBorder: 'border-purple-500/40', baseShadow: 'shadow-[0_0_20px_rgba(168,85,247,0.15),inset_0_0_15px_rgba(168,85,247,0.1)]', hoverBorder: 'group-hover:border-purple-400', hoverShadow: 'group-hover:shadow-[0_0_30px_rgba(168,85,247,0.5),inset_0_0_20px_rgba(168,85,247,0.3)]', glowText: 'drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]', radialGlow: 'rgba(168,85,247,0.25)' },
 };
 
-interface TechItem {
-  category: string; name: string; color: 'blue' | 'orange' | 'purple';
-}
+interface TechItem { category: string; name: string; color: 'blue' | 'orange' | 'purple'; }
 
 const stack: TechItem[] = [
   { category: 'LIBRARY', name: 'REACT', color: 'blue' }, { category: 'FRAMEWORK', name: 'NEXT.JS', color: 'purple' },
@@ -60,22 +57,42 @@ const TechCard = React.memo(({ tech, colorTheme }: TechCardProps) => (
 TechCard.displayName = 'TechCard';
 
 export default function TechStack() {
+  const { animationsEnabled } = useAnimation(); 
+
   return (
     <section id="skills" className="relative bg-black text-white pb-32 overflow-hidden min-h-screen flex flex-col justify-start">
-      <motion.div animate={{ opacity: [0.2, 0.4, 0.2], scale: [1, 1.1, 1] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-blue-600/20 rounded-full mix-blend-screen filter blur-[150px] pointer-events-none z-0" />
-      <motion.div animate={{ opacity: [0.15, 0.3, 0.15], scale: [1, 1.2, 1] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }} className="absolute bottom-1/4 -right-20 w-[500px] h-[500px] bg-orange-600/20 rounded-full mix-blend-screen filter blur-[150px] pointer-events-none z-0" />
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+      
+      <div className={`absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-blue-600/20 rounded-full mix-blend-screen filter blur-[130px] pointer-events-none z-0 ${animationsEnabled ? 'animate-ambient-glow' : 'opacity-20'}`} />
+      <div className={`absolute bottom-1/4 -right-20 w-[500px] h-[500px] bg-orange-600/20 rounded-full mix-blend-screen filter blur-[130px] pointer-events-none z-0 ${animationsEnabled ? 'animate-ambient-glow-delayed' : 'opacity-20'}`} />
+      
+      {animationsEnabled && (
+        <div className="absolute inset-0 z-10 pointer-events-none">
+          <Suspense fallback={null}>
+            <SplashCursor SPLAT_RADIUS={0.4} SPLAT_FORCE={3000} DENSITY_DISSIPATION={4} VELOCITY_DISSIPATION={1.5} />
+          </Suspense>
+        </div>
+      )}
 
-      <div className="absolute inset-0 z-10 pointer-events-none">
-        <Suspense fallback={null}>
-          <SplashCursor SPLAT_RADIUS={0.3} SPLAT_FORCE={4000} DENSITY_DISSIPATION={2} VELOCITY_DISSIPATION={0.5} />
-        </Suspense>
-      </div>
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
       
       <div className="absolute top-0 left-0 w-full z-30 bg-black/40 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.5)] py-4">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-orange-500/50 to-transparent shadow-[0_0_15px_rgba(249,115,22,0.8)]"></div>
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
-        <LogoLoop logos={techLogos} speed={40} direction="left" logoHeight={50} gap={60} hoverSpeed={0} scaleOnHover={true} fadeOut={true} fadeOutColor="#000000" ariaLabel="Technology partners" className="relative z-10 pointer-events-auto" />
+        
+        {/* OPTIMIZACIÓN: Se le pasa speed=0 si las animaciones están apagadas */}
+        <LogoLoop 
+          logos={techLogos} 
+          speed={animationsEnabled ? 40 : 0} 
+          direction="left" 
+          logoHeight={50} 
+          gap={60} 
+          hoverSpeed={0} 
+          scaleOnHover={animationsEnabled} 
+          fadeOut={true} 
+          fadeOutColor="#000000" 
+          ariaLabel="Technology partners" 
+          className="relative z-10 pointer-events-auto" 
+        />
       </div>
 
       <div className="max-w-7xl mx-auto px-6 w-full pt-44 relative z-20 pointer-events-none">
@@ -85,7 +102,7 @@ export default function TechStack() {
             <h2 className="text-5xl md:text-7xl font-extralight tracking-tighter drop-shadow-lg">TECH_<span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-orange-400">STACK</span></h2>
           </div>
           <span className="font-mono text-xs text-gray-400 hidden md:flex items-center gap-2 bg-black/40 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md">
-            <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,1)]"></span></span>
+            <span className="relative flex h-2 w-2"><span className={`absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75 ${animationsEnabled ? 'animate-ping' : 'opacity-0'}`}></span><span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,1)]"></span></span>
             SYSTEM_OPTIMIZED
           </span>
         </motion.div>
