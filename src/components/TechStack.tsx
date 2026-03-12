@@ -78,8 +78,6 @@ export default function TechStack() {
       <div className="absolute top-0 left-0 w-full z-30 bg-black/40 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.5)] py-4">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-orange-500/50 to-transparent shadow-[0_0_15px_rgba(249,115,22,0.8)]"></div>
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
-        
-        {/* OPTIMIZACIÓN: Se le pasa speed=0 si las animaciones están apagadas */}
         <LogoLoop 
           logos={techLogos} 
           speed={animationsEnabled ? 40 : 0} 
@@ -99,7 +97,8 @@ export default function TechStack() {
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/10 pb-6 mb-12 pointer-events-none">
           <div>
             <span className="text-orange-400 font-mono text-xs font-bold tracking-[0.2em] uppercase mb-3 block drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]">/ Conocimientos</span>
-            <h2 className="text-5xl md:text-7xl font-extralight tracking-tighter drop-shadow-lg">TECH_<span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-orange-400">STACK</span></h2>
+            {/* OPTIMIZACIÓN: text-4xl en vez de 5xl en celulares y break-words para evitar desbordes */}
+            <h2 className="text-4xl sm:text-5xl md:text-7xl font-extralight tracking-tighter drop-shadow-lg break-words">TECH_<span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-orange-400">STACK</span></h2>
           </div>
           <span className="font-mono text-xs text-gray-400 hidden md:flex items-center gap-2 bg-black/40 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md">
             <span className="relative flex h-2 w-2"><span className={`absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75 ${animationsEnabled ? 'animate-ping' : 'opacity-0'}`}></span><span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,1)]"></span></span>

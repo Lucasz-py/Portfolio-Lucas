@@ -38,8 +38,6 @@ const ProjectCard = React.memo(({ project, index, isAnimated }: { project: Proje
       <div className="w-full lg:w-3/5 relative z-10">
         <div className={`relative p-[2px] rounded-2xl overflow-hidden ${theme.baseShadow} ${theme.hoverShadow} transition-shadow duration-500 aspect-[16/10] md:aspect-[16/9] bg-black`}>
           <div className={`absolute inset-0 ${theme.baseRing}`}></div>
-          
-          {/* OPTIMIZACIÓN: Solo renderizamos el blur si está activado. Si está pausado, quitamos el 'spin' */}
           {isAnimated && (
             <div className={`absolute top-1/2 left-1/2 h-[200%] w-[200%] -translate-x-1/2 -translate-y-1/2 animate-[spin_4s_linear_infinite] blur-xl opacity-80 ${theme.borderSpinner}`}></div>
           )}
@@ -49,8 +47,6 @@ const ProjectCard = React.memo(({ project, index, isAnimated }: { project: Proje
             <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none"></div>
             <div className="absolute inset-0 z-20 transition-opacity duration-500 pointer-events-none opacity-100" style={{ background: `radial-gradient(circle at center, ${theme.radialGlow} 0%, transparent 80%)` }}></div>
             <img src={project.image} alt={project.title} loading="lazy" className={`w-full h-full object-cover object-top ${isAnimated ? 'transform group-hover:scale-105 transition-transform duration-700 ease-out' : ''}`} />
-            
-            {/* Línea láser de hover, también apagada si no hay animaciones */}
             {isAnimated && (
               <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-white/80 to-transparent -translate-x-full group-hover:animate-[scan_2s_ease-in-out_infinite] opacity-0 group-hover:opacity-100 z-30"></div>
             )}
@@ -94,7 +90,6 @@ export default function SelectedWorks() {
       
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
       
-      {/* OPTIMIZACIÓN: Los >_ se quedan quietos si no hay animaciones */}
       <motion.div animate={animationsEnabled ? { y: [0, -30, 0], opacity: [0.1, 0.6, 0.1] } : { y: 0, opacity: 0.3 }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[15%] left-[10%] text-purple-500 font-mono text-2xl font-bold pointer-events-none select-none z-0">{'>_'}</motion.div>
       <motion.div animate={animationsEnabled ? { y: [0, 40, 0], opacity: [0.1, 0.5, 0.1] } : { y: 0, opacity: 0.3 }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="absolute bottom-[30%] right-[15%] text-blue-500 font-mono text-xl font-bold pointer-events-none select-none z-0">{'>_'}</motion.div>
       <motion.div animate={animationsEnabled ? { x: [0, 30, 0], opacity: [0.1, 0.7, 0.1] } : { x: 0, opacity: 0.3 }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 2 }} className="absolute top-[50%] left-[5%] text-orange-500 font-mono text-3xl font-bold pointer-events-none select-none z-0">{'>_'}</motion.div>
@@ -108,7 +103,8 @@ export default function SelectedWorks() {
           <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.3 }} className="absolute bottom-[-1px] left-0 w-1/3 h-[1px] bg-gradient-to-r from-purple-500 via-blue-500 to-transparent origin-left"></motion.div>
           <div>
             <span className="text-purple-400 font-mono text-xs font-bold tracking-[0.2em] uppercase mb-3 block drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]">/ Mis Proyectos</span>
-            <h2 className="text-5xl md:text-7xl font-extralight tracking-tighter drop-shadow-lg">SELECTED_<span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-blue-400 to-orange-400">WORKS</span></h2>
+            {/* OPTIMIZACIÓN: text-4xl en vez de 5xl en celulares y break-words */}
+            <h2 className="text-4xl sm:text-5xl md:text-7xl font-extralight tracking-tighter drop-shadow-lg break-words">SELECTED_<span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-blue-400 to-orange-400">WORKS</span></h2>
           </div>
           <span className="font-mono text-xs text-gray-400 hidden md:flex items-center gap-2 bg-black/40 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md">
             <span className="relative flex h-2 w-2"><span className={`absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75 ${animationsEnabled ? 'animate-ping' : 'opacity-0'}`}></span><span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,1)]"></span></span>
@@ -116,7 +112,6 @@ export default function SelectedWorks() {
           </span>
         </motion.div>
         <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="flex flex-col w-full gap-24 lg:gap-32">
-          {/* Se pasa isAnimated al componente hijo */}
           {projects.map((project, index) => <ProjectCard key={project.id} project={project} index={index} isAnimated={animationsEnabled} />)}
         </motion.div>
       </div>

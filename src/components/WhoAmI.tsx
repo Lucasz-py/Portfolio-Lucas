@@ -25,7 +25,6 @@ const WhoAmI: React.FC = () => {
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-orange-500/50 to-transparent"></div>
         <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
         
-        {/* OPTIMIZACIÓN: Se pausa la animación si no hay efectos */}
         <motion.div 
           animate={animationsEnabled ? { x: ["0%", "-50%"] } : { x: 0 }} 
           transition={{ repeat: Infinity, ease: "linear", duration: 45 }} 
@@ -58,54 +57,61 @@ const WhoAmI: React.FC = () => {
         </div>
       )}
 
-      <div className="container mx-auto px-6 relative z-20 max-w-7xl">
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-20">
+      <div className="container mx-auto px-6 relative z-20 w-full max-w-7xl">
+        {/* Contenedor principal alineado al centro */}
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20 w-full">
           
+          {/* LADO IZQUIERDO: Tarjeta */}
           <motion.div
             initial={{ opacity: 0, x: -80 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
-            className="w-full lg:w-1/2 flex justify-center"
+            className="w-full lg:w-1/2 flex justify-center items-center mt-10 md:mt-0"
           >
-            <div className="w-full max-w-[400px] hover-target">
+            {/* Contenedor de la tarjeta forzado al centro */}
+            <div className="w-full flex justify-center items-center max-w-[360px] md:max-w-[400px] hover-target">
               <ProfileCard
                 avatarUrl={personImg} grainUrl={grainImg} name="Escobar Lucas"
                 title="Lic. En Sistemas" handle="Lucasz" status="Available for work"
-                contactText="Contact" showUserInfo={true} enableTilt={animationsEnabled} enableMobileTilt={animationsEnabled}
+                contactText="Contact" showUserInfo={true} enableTilt={animationsEnabled} 
+                enableMobileTilt={false} // Desactivado en móviles para no interferir con el scroll
                 mobileTiltSensitivity={5} behindGlowEnabled={true} behindGlowColor="rgba(125, 190, 255, 0.67)"
                 behindGlowSize="50%" onContactClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
               />
             </div>
           </motion.div>
 
+          {/* LADO DERECHO: Texto y Badges */}
           <motion.div
             initial={{ opacity: 0, x: 80 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.8, type: "spring", bounce: 0.3, delay: 0.2 }}
-            className="w-full lg:w-1/2 flex flex-col justify-center max-w-[600px] pointer-events-none"
+            // OPTIMIZACIÓN MÓVIL: items-center y text-center en móvil; items-start y text-left en PC
+            className="w-full lg:w-1/2 flex flex-col items-center lg:items-start justify-center text-center lg:text-left max-w-[600px] pointer-events-none mx-auto mt-4 lg:mt-0"
           >
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.4 }} className="mb-6">
-              <span className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-orange-400 font-mono text-xs font-bold tracking-[0.2em] uppercase backdrop-blur-md">
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.4 }} className="mb-6 w-full flex justify-center lg:justify-start">
+              <span className="inline-block px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-orange-400 font-mono text-xs font-bold tracking-[0.2em] uppercase backdrop-blur-md">
                 / About Me
               </span>
             </motion.div>
 
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-extralight tracking-tight mb-8 leading-tight drop-shadow-lg">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extralight tracking-tight mb-6 md:mb-8 leading-tight drop-shadow-lg w-full">
               Diseño con <span className="font-light text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">precisión</span>, <br />
               desarrollo con <span className="font-light text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400">lógica</span>.
             </h2>
 
-            <div className="space-y-6 text-gray-300 font-light text-lg sm:text-xl leading-relaxed mb-10 drop-shadow-md">
+            <div className="space-y-4 md:space-y-6 text-gray-300 font-light text-base sm:text-lg md:text-xl leading-relaxed mb-8 md:mb-10 drop-shadow-md w-full px-2 lg:px-0">
               <p>Soy un desarrollador apasionado por crear experiencias digitales que no solo funcionen a la perfección, sino que también dejen una impresión visual duradera.</p>
               <p>Actualmente estudiante de <strong className="text-white font-medium">Licenciatura en Sistemas de Información</strong>, combinando los fundamentos de la ingeniería de software con las últimas tecnologías del desarrollo web moderno.</p>
             </div>
 
+            {/* Badges centrados en móvil */}
             <motion.div 
               initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }}
               variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
-              className="flex flex-wrap gap-4 pointer-events-auto"
+              className="flex flex-wrap justify-center lg:justify-start gap-3 md:gap-4 pointer-events-auto w-full px-2 lg:px-0"
             >
               {infoBadges.map((item, index) => {
                 const Icon = item.icon;
@@ -113,7 +119,7 @@ const WhoAmI: React.FC = () => {
                   <motion.div 
                     key={index} 
                     variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} 
-                    className="px-5 py-3 rounded-xl bg-black/40 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-colors flex flex-col justify-center"
+                    className="px-5 py-3 rounded-xl bg-black/40 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-colors flex flex-col justify-center items-center lg:items-start"
                   >
                     <span className="flex items-center gap-2 text-[10px] md:text-xs text-gray-400 font-mono uppercase tracking-wider mb-1">
                       <Icon className="w-3.5 h-3.5 text-orange-400" /> {item.label}
