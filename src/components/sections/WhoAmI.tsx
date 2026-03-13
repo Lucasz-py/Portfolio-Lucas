@@ -3,21 +3,22 @@ import { motion } from 'framer-motion';
 import { FiMapPin, FiBookOpen, FiZap } from 'react-icons/fi';
 import ProfileCard from '../ui/ProfileCard';
 import { useAnimation } from '../../context/AnimationContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 import personImg from '../../assets/person.webp';
 import grainImg from '../../assets/grain.webp';
-
 
 const SplashCursor = React.lazy(() => import('../ui/SplashCursor'));
 
 const WhoAmI: React.FC = () => {
   const { animationsEnabled } = useAnimation(); 
+  const { t, language } = useLanguage();
   const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
   const infoBadges = [
-    { label: "Ubicación", value: "Argentina", icon: FiMapPin },
-    { label: "Formación", value: "Sistemas", icon: FiBookOpen },
-    { label: "Enfoque", value: "Full Stack", icon: FiZap },
+    { label: t("Ubicación", "Location"), value: "Argentina", icon: FiMapPin },
+    { label: t("Formación", "Education"), value: t("Sistemas", "Systems Degree"), icon: FiBookOpen },
+    { label: t("Enfoque", "Focus"), value: "Full Stack", icon: FiZap },
   ];
 
   return (
@@ -59,8 +60,7 @@ const WhoAmI: React.FC = () => {
         </div>
       )}
 
-      {/* KEY DINÁMICO: Reinicia animaciones del contenido al cambiar de modo */}
-      <div key={`whoami-content-${animationsEnabled}`} className="container mx-auto px-6 relative z-20 w-full max-w-7xl">
+      <div key={`whoami-content-${animationsEnabled}-${language}`} className="container mx-auto px-6 relative z-20 w-full max-w-7xl">
         <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20 w-full">
           
           <motion.div
@@ -73,8 +73,8 @@ const WhoAmI: React.FC = () => {
             <div className="w-full flex justify-center items-center max-w-[360px] md:max-w-[400px] hover-target">
               <ProfileCard
                 avatarUrl={personImg} grainUrl={grainImg} name="Escobar Lucas"
-                title="Lic. En Sistemas" handle="Lucasz" status="Available for work"
-                contactText="Contact" showUserInfo={true} enableTilt={animationsEnabled} 
+                title={t("Lic. En Sistemas", "B.S. in Systems Engineering")} handle="Lucasz" status={t("Disponible", "Available for work")}
+                contactText={t("Contacto", "Contact")} showUserInfo={true} enableTilt={animationsEnabled} 
                 enableMobileTilt={false} 
                 mobileTiltSensitivity={5} behindGlowEnabled={true} behindGlowColor="rgba(125, 190, 255, 0.67)"
                 behindGlowSize="50%" onContactClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
@@ -96,13 +96,13 @@ const WhoAmI: React.FC = () => {
             </motion.div>
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extralight tracking-tight mb-6 md:mb-8 leading-tight drop-shadow-lg w-full">
-              Diseño con <span className="font-light text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">precisión</span>, <br />
-              Desarrollo con <span className="font-light text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400">lógica</span>.
+              {t("Diseño con ", "Design with ")}<span className="font-light text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">{t("precisión", "precision")}</span>, <br />
+              {t("Desarrollo con ", "Develop with ")}<span className="font-light text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400">{t("lógica", "logic")}</span>.
             </h2>
 
             <div className="space-y-4 md:space-y-6 text-gray-300 font-light text-base sm:text-lg md:text-xl leading-relaxed mb-8 md:mb-10 drop-shadow-md w-full px-2 lg:px-0">
-              <p>Bienvenido a mi espacio digital. Soy Lucas, estudiante de Sistemas y Desarrollador Full Stack. Mi enfoque es simple: traducir problemas complejos en soluciones digitales eficientes, escalables y con un diseño de primer nivel.</p>
-              <p>Actualmente estudiante de <strong className="text-white font-medium">Licenciatura en Sistemas de Información</strong>, combinando los fundamentos de la ingeniería de software con las últimas tecnologías del desarrollo web moderno.</p>
+              <p>{t("Bienvenido a mi espacio digital. Soy Lucas, estudiante de Sistemas y Desarrollador Full Stack. Mi enfoque es simple: traducir problemas complejos en soluciones digitales eficientes, escalables y con un diseño de primer nivel.", "Welcome to my digital space. I'm Lucas, a Systems student and Full Stack Developer. My approach is simple: translating complex problems into efficient, scalable digital solutions with top-tier design.")}</p>
+              <p>{t("Actualmente estudiante de ", "Currently studying for a ")}<strong className="text-white font-medium">{t("Licenciatura en Sistemas de Información", "Bachelor's Degree in Information Systems")}</strong>, {t("combinando los fundamentos de la ingeniería de software con las últimas tecnologías del desarrollo web moderno.", "combining the fundamentals of software engineering with the latest modern web development technologies.")}</p>
             </div>
 
             <motion.div 

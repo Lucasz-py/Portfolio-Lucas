@@ -2,9 +2,10 @@ import React, { Suspense } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import LogoLoop from '../ui/LogoLoop';
 import { useAnimation } from '../../context/AnimationContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { 
   SiDocker, SiSupabase, SiReact, SiNextdotjs, SiTypescript, 
-  SiTailwindcss, SiVercel, SiNodedotjs, SiGit, SiMercadopago
+  SiTailwindcss, SiVercel, SiNodedotjs, SiGit, SiMercadopago 
 } from 'react-icons/si';
 
 const SplashCursor = React.lazy(() => import('../ui/SplashCursor'));
@@ -59,6 +60,7 @@ TechCard.displayName = 'TechCard';
 
 export default function TechStack() {
   const { animationsEnabled } = useAnimation(); 
+  const { t, language } = useLanguage();
 
   return (
     <section id="skills" className="relative bg-black text-white pb-32 overflow-hidden min-h-screen flex flex-col justify-start">
@@ -80,30 +82,20 @@ export default function TechStack() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-orange-500/50 to-transparent shadow-[0_0_15px_rgba(249,115,22,0.8)]"></div>
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
         <LogoLoop 
-          logos={techLogos} 
-          speed={animationsEnabled ? 40 : 0} 
-          direction="left" 
-          logoHeight={50} 
-          gap={60} 
-          hoverSpeed={0} 
-          scaleOnHover={animationsEnabled} 
-          fadeOut={true} 
-          fadeOutColor="#000000" 
-          ariaLabel="Technology partners" 
-          className="relative z-10 pointer-events-auto" 
+          logos={techLogos} speed={animationsEnabled ? 40 : 0} direction="left" logoHeight={50} gap={60} hoverSpeed={0} 
+          scaleOnHover={animationsEnabled} fadeOut={true} fadeOutColor="#000000" ariaLabel="Technology partners" className="relative z-10 pointer-events-auto" 
         />
       </div>
 
-      {/* KEY DINÁMICO: Reinicia animaciones del contenido al cambiar de modo */}
-      <div key={`tech-content-${animationsEnabled}`} className="max-w-7xl mx-auto px-6 w-full pt-44 relative z-20 pointer-events-none">
+      <div key={`tech-content-${animationsEnabled}-${language}`} className="max-w-7xl mx-auto px-6 w-full pt-44 relative z-20 pointer-events-none">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.8, ease: smoothEase }} className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/10 pb-6 mb-12 pointer-events-none will-change-transform">
           <div>
-            <span className="text-orange-400 font-mono text-xs font-bold tracking-[0.2em] uppercase mb-3 block drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]">/ Conocimientos</span>
+            <span className="text-orange-400 font-mono text-xs font-bold tracking-[0.2em] uppercase mb-3 block drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]">{t("/ Conocimientos", "/ Skills")}</span>
             <h2 className="text-4xl sm:text-5xl md:text-7xl font-extralight tracking-tighter drop-shadow-lg break-words">TECH_<span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-orange-400">STACK</span></h2>
           </div>
           <span className="font-mono text-xs text-gray-400 hidden md:flex items-center gap-2 bg-black/40 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md">
             <span className="relative flex h-2 w-2"><span className={`absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75 transition-opacity duration-500 ${animationsEnabled ? 'animate-ping' : 'opacity-0'}`}></span><span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,1)]"></span></span>
-            SYSTEM_OPTIMIZED
+            {t("SISTEMA OPTIMIZADO", "SYSTEM OPTIMIZED")}
           </span>
         </motion.div>
 

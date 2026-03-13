@@ -5,27 +5,30 @@ import Hero from './components/sections/Hero';
 import WhoAmI from './components/sections/WhoAmI';
 import TechStack from './components/sections/TechStack';
 import SelectedWorks from './components/sections/SelectedWorks';
-import { AnimationProvider } from './context/AnimationContext';
 
+// Importamos los Contextos
+import { AnimationProvider } from './context/AnimationContext';
+import { LanguageProvider } from './context/LanguageContext';
 
 function App() {
   return (
-    // Envolvemos todo en el AnimationProvider
     <AnimationProvider>
-      <div className="relative min-h-screen bg-black">
-        <CustomCursor />
-        
-        <Header />
+      <LanguageProvider>
+        <div className="relative min-h-screen bg-black">
+          <CustomCursor />
+          
+          <Header />
 
-        <main>
-          <Hero />
-          <WhoAmI />
-          <TechStack />
-          <SelectedWorks />
-        </main>
+          <main>
+            <Hero />
+            <WhoAmI />
+            <TechStack />
+            <SelectedWorks />
+          </main>
 
-        <Footer />
-      </div>
+          <Footer />
+        </div>
+      </LanguageProvider>
     </AnimationProvider>
   );
 }

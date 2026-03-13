@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, type Variants } from 'framer-motion';
 import { FiExternalLink } from 'react-icons/fi';
 import { useAnimation } from '../../context/AnimationContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 import web1 from '../../assets/web1.webp';
 import web2 from '../../assets/web2.webp';
@@ -16,12 +17,6 @@ const colors: Record<'blue' | 'orange' | 'purple', ColorTheme> = {
 };
 
 interface Project { id: string; title: string; category: string; description: string; techStack: string[]; image: string; color: 'blue' | 'orange' | 'purple'; liveUrl?: string; }
-
-const projects: Project[] = [
-  { id: '01', title: 'Abrazo de Luz', category: 'E-COMMERCE PLATFORM', description: 'Tienda online orientada a productos holísticos y espirituales. Plataforma diseñada con un enfoque en la experiencia de usuario (UX), navegación intuitiva y un flujo de compra optimizado para maximizar las conversiones.', techStack: ['React', 'Next.js', 'Tailwind CSS', 'Vercel'], image: web1, color: 'purple', liveUrl: 'https://www.abrazodeluz.shop/' },
-  { id: '02', title: 'La Sinfónica', category: 'E-COMMERCE & MANAGEMENT', description: 'Plataforma de comercio electrónico de alto rendimiento. Desarrollo integral que incluye integración de pasarela de pagos con Mercado Pago, optimización SEO avanzada y gestión de dominio personalizado.', techStack: ['Next.js', 'Tailwind CSS', 'Supabase', 'Mercado Pago API'], image: web2, color: 'orange', liveUrl: 'https://www.lasinfonica.com.ar/' },
-  { id: '03', title: 'Play GBA Games', category: 'WEB EMULATOR', description: 'Plataforma interactiva que permite emular y jugar juegos clásicos de Game Boy Advance directamente desde el navegador web. Optimizada para ofrecer un alto rendimiento sin latencia utilizando tecnologías modernas.', techStack: ['React', 'TypeScript', 'Vite', 'WebAssembly'], image: web3, color: 'blue', liveUrl: 'https://playgbagames.vercel.app/' }
-];
 
 const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const containerVariants: Variants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.3 } } };
@@ -39,18 +34,13 @@ const ProjectCard = React.memo(({ project, index, isAnimated }: { project: Proje
       <div className="w-full lg:w-3/5 relative z-10">
         <div className={`relative p-[2px] rounded-2xl overflow-hidden ${theme.baseShadow} ${theme.hoverShadow} transition duration-500 ease-out aspect-[16/10] md:aspect-[16/9] bg-black`}>
           <div className={`absolute inset-0 ${theme.baseRing}`}></div>
-          {isAnimated && (
-            <div className={`absolute top-1/2 left-1/2 h-[200%] w-[200%] -translate-x-1/2 -translate-y-1/2 animate-[spin_4s_linear_infinite] blur-xl opacity-80 ${theme.borderSpinner}`}></div>
-          )}
+          {isAnimated && <div className={`absolute top-1/2 left-1/2 h-[200%] w-[200%] -translate-x-1/2 -translate-y-1/2 animate-[spin_4s_linear_infinite] blur-xl opacity-80 ${theme.borderSpinner}`}></div>}
           <div className={`absolute top-1/2 left-1/2 h-[200%] w-[200%] -translate-x-1/2 -translate-y-1/2 ${isAnimated ? 'animate-[spin_4s_linear_infinite]' : ''} ${theme.borderSpinner}`}></div>
-          
           <ImageWrapper {...wrapperProps} className={`absolute inset-[2px] rounded-[14px] overflow-hidden bg-black z-10 ${project.liveUrl ? 'cursor-pointer' : ''}`}>
             <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-20 transition-opacity duration-500 ease-out pointer-events-none"></div>
             <div className="absolute inset-0 z-20 transition-opacity duration-500 ease-out pointer-events-none opacity-100" style={{ background: `radial-gradient(circle at center, ${theme.radialGlow} 0%, transparent 80%)` }}></div>
             <img src={project.image} alt={project.title} loading="lazy" className={`w-full h-full object-cover object-top will-change-transform ${isAnimated ? 'transform group-hover:scale-105 transition-transform duration-700 ease-[0.22,1,0.36,1]' : ''}`} />
-            {isAnimated && (
-              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-white/80 to-transparent -translate-x-full group-hover:animate-[scan_2s_ease-in-out_infinite] opacity-0 group-hover:opacity-100 z-30 transition-opacity duration-300"></div>
-            )}
+            {isAnimated && <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-white/80 to-transparent -translate-x-full group-hover:animate-[scan_2s_ease-in-out_infinite] opacity-0 group-hover:opacity-100 z-30 transition-opacity duration-300"></div>}
           </ImageWrapper>
         </div>
       </div>
@@ -77,7 +67,14 @@ ProjectCard.displayName = 'ProjectCard';
 
 export default function SelectedWorks() {
   const { animationsEnabled } = useAnimation(); 
+  const { t, language } = useLanguage();
   const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
+  const projects: Project[] = [
+    { id: '01', title: 'Abrazo de Luz', category: 'E-COMMERCE PLATFORM', description: t('Tienda online orientada a productos holísticos y espirituales. Plataforma diseñada con un enfoque en la experiencia de usuario (UX), navegación intuitiva y un flujo de compra optimizado para maximizar las conversiones.', 'Online store focused on holistic and spiritual products. Platform designed with a focus on user experience (UX), intuitive navigation, and an optimized purchasing flow to maximize conversions.'), techStack: ['React', 'Next.js', 'Tailwind CSS', 'Vercel'], image: web1, color: 'purple', liveUrl: 'https://www.abrazodeluz.shop/' },
+    { id: '02', title: 'La Sinfónica', category: 'E-COMMERCE & MANAGEMENT', description: t('Plataforma de comercio electrónico de alto rendimiento. Desarrollo integral que incluye integración de pasarela de pagos con Mercado Pago, optimización SEO avanzada y gestión de dominio personalizado.', 'High-performance e-commerce platform. Comprehensive development including payment gateway integration with Mercado Pago, advanced SEO optimization, and custom domain management.'), techStack: ['Next.js', 'Tailwind CSS', 'Supabase', 'Mercado Pago API'], image: web2, color: 'orange', liveUrl: 'https://www.lasinfonica.com.ar/' },
+    { id: '03', title: 'Play GBA Games', category: 'WEB EMULATOR', description: t('Plataforma interactiva que permite emular y jugar juegos clásicos de Game Boy Advance directamente desde el navegador web. Optimizada para ofrecer un alto rendimiento sin latencia utilizando tecnologías modernas.', 'Interactive platform that allows emulating and playing classic Game Boy Advance games directly from the web browser. Optimized to offer high performance with zero latency using modern technologies.'), techStack: ['React', 'TypeScript', 'Vite', 'WebAssembly'], image: web3, color: 'blue', liveUrl: 'https://playgbagames.vercel.app/' }
+  ];
 
   return (
     <section id="work" className="relative bg-black text-white pt-24 pb-16 overflow-hidden">
@@ -87,25 +84,14 @@ export default function SelectedWorks() {
 
       <div className={`absolute top-[5%] left-[-5%] w-[600px] h-[600px] bg-blue-600/30 rounded-full mix-blend-screen filter blur-[120px] pointer-events-none z-0 transition-opacity duration-1000 ease-in-out ${animationsEnabled ? 'animate-ambient-glow' : 'opacity-20'}`} />
       <div className={`absolute bottom-[10%] right-[-5%] w-[700px] h-[700px] bg-purple-600/30 rounded-full mix-blend-screen filter blur-[120px] pointer-events-none z-0 transition-opacity duration-1000 ease-in-out ${animationsEnabled ? 'animate-ambient-glow-delayed' : 'opacity-20'}`} />
-      <div className={`absolute top-[30%] left-[20%] w-[500px] h-[500px] bg-orange-600/20 rounded-full mix-blend-screen filter blur-[120px] pointer-events-none z-0 transition-opacity duration-1000 ease-in-out ${animationsEnabled ? 'animate-ambient-glow-slow' : 'opacity-20'}`} />
-      <div className={`absolute bottom-[40%] left-[60%] w-[400px] h-[400px] bg-blue-500/20 rounded-full mix-blend-screen filter blur-[120px] pointer-events-none z-0 transition-opacity duration-1000 ease-in-out ${animationsEnabled ? 'animate-ambient-glow' : 'opacity-20'}`} />
       
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
       
-      <motion.div animate={animationsEnabled ? { y: [0, -30, 0], opacity: [0.1, 0.6, 0.1] } : { y: 0, opacity: 0.3 }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[15%] left-[10%] text-purple-500 font-mono text-2xl font-bold pointer-events-none select-none z-0">{'>_'}</motion.div>
-      <motion.div animate={animationsEnabled ? { y: [0, 40, 0], opacity: [0.1, 0.5, 0.1] } : { y: 0, opacity: 0.3 }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="absolute bottom-[30%] right-[15%] text-blue-500 font-mono text-xl font-bold pointer-events-none select-none z-0">{'>_'}</motion.div>
-      <motion.div animate={animationsEnabled ? { x: [0, 30, 0], opacity: [0.1, 0.7, 0.1] } : { x: 0, opacity: 0.3 }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 2 }} className="absolute top-[50%] left-[5%] text-orange-500 font-mono text-3xl font-bold pointer-events-none select-none z-0">{'>_'}</motion.div>
-      <motion.div animate={animationsEnabled ? { y: [0, -25, 0], opacity: [0.1, 0.5, 0.1] } : { y: 0, opacity: 0.3 }} transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} className="absolute top-[80%] left-[40%] text-purple-400 font-mono text-lg font-bold pointer-events-none select-none z-0">{'>_'}</motion.div>
-      <motion.div animate={animationsEnabled ? { x: [0, -30, 0], opacity: [0.1, 0.6, 0.1] } : { x: 0, opacity: 0.3 }} transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }} className="absolute top-[25%] right-[25%] text-orange-400 font-mono text-2xl font-bold pointer-events-none select-none z-0">{'>_'}</motion.div>
-      <motion.div animate={animationsEnabled ? { y: [0, 20, 0], x: [0, 15, 0], opacity: [0.1, 0.4, 0.1] } : { y: 0, x: 0, opacity: 0.2 }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2.5 }} className="absolute bottom-[10%] left-[20%] text-blue-400 font-mono text-xl font-bold pointer-events-none select-none z-0">{'>_'}</motion.div>
-      <motion.div animate={animationsEnabled ? { y: [0, -35, 0], opacity: [0.1, 0.8, 0.1] } : { y: 0, opacity: 0.4 }} transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.2 }} className="absolute top-[40%] right-[5%] text-white/30 font-mono text-sm font-bold pointer-events-none select-none z-0">{'>_'}</motion.div>
-
-      {/* KEY DINÁMICO: Reinicia animaciones del contenido al cambiar de modo */}
-      <div key={`works-content-${animationsEnabled}`} className="max-w-7xl mx-auto px-6 w-full relative z-20">
+      <div key={`works-content-${animationsEnabled}-${language}`} className="max-w-7xl mx-auto px-6 w-full relative z-20">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.8, ease: smoothEase }} className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/10 pb-6 mb-24 pointer-events-none relative will-change-transform">
           <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.3, ease: smoothEase }} className="absolute bottom-[-1px] left-0 w-1/3 h-[1px] bg-gradient-to-r from-purple-500 via-blue-500 to-transparent origin-left"></motion.div>
           <div>
-            <span className="text-purple-400 font-mono text-xs font-bold tracking-[0.2em] uppercase mb-3 block drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]">/ Mis Proyectos</span>
+            <span className="text-purple-400 font-mono text-xs font-bold tracking-[0.2em] uppercase mb-3 block drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]">{t("/ Mis Proyectos", "/ My Projects")}</span>
             <h2 className="text-4xl sm:text-5xl md:text-7xl font-extralight tracking-tighter drop-shadow-lg break-words">SELECTED_<span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-blue-400 to-orange-400">WORKS</span></h2>
           </div>
           <span className="font-mono text-xs text-gray-400 hidden md:flex items-center gap-2 bg-black/40 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md">
@@ -116,10 +102,6 @@ export default function SelectedWorks() {
         <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="flex flex-col w-full gap-24 lg:gap-32">
           {projects.map((project, index) => <ProjectCard key={project.id} project={project} index={index} isAnimated={animationsEnabled} />)}
         </motion.div>
-      </div>
-
-      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent z-30">
-        <div className="absolute left-1/2 -translate-x-1/2 top-0 w-1/2 md:w-1/3 h-[1px] bg-gradient-to-r from-orange-500/80 via-purple-500/80 to-transparent shadow-[0_0_15px_rgba(249,115,22,0.8)]"></div>
       </div>
     </section>
   );
